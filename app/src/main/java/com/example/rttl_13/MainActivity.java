@@ -54,15 +54,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 200){
-
+            TextView inputText = findViewById(R.id.InputText);
             if(resultCode == RESULT_OK && data != null){
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
                 Translate translate = options.getService();
                 String text = "Hello, world!";
                 String targetLanguage = "zh_TW"; // 目標語言
+                inputText.setText("輸入:"+result.get(0));
                 runTranslation(translate,result.get(0),targetLanguage);
-                //outputText.setText("結果:"+result.get(0));
             }
         }
     }
