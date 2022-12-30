@@ -1,4 +1,4 @@
-package com.example.rttl_13;
+package com.example.myapplication;
 
 import org.junit.Test;
 
