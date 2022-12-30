@@ -7,12 +7,11 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/btn_microphone"
+        android:id="@+id/btn_repeat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="Start recognition"
-        app:layout_constraintBottom_toTopOf="@+id/speak"
+        android:text="repeat"        app:layout_constraintBottom_toTopOf="@+id/speak"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
@@ -47,5 +46,14 @@
         app:layout_constraintHorizontal_bias="0.41"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/InputText" />
+
+    <Button
+        android:id="@+id/btn_swap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="swap language"
+        app:layout_constraintBottom_toTopOf="@+id/btn_repeat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
