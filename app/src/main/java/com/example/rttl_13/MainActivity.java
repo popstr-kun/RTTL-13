@@ -2,6 +2,7 @@ package com.example.rttl_13;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech textToSpeech;
     private String translateTextGlobal;
-    Languages language = new Languages(Locale.ENGLISH,Locale.TAIWAN);
+    Languages language = new Languages(Locale.US,Locale.TAIWAN);
 
     private List<Msg>           msgList = new ArrayList<>();
     private RecyclerView        msgRecyclerView;
@@ -48,12 +49,11 @@ public class MainActivity extends AppCompatActivity {
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
     Translate translate = options.getService();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-
 
         ImageView imageSpeak = findViewById(R.id.image_speak);
         Button btnInput      = findViewById(R.id.btn_input);
@@ -80,15 +80,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        //Text to Speech
-        textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                if(i != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(language.getSpeechLanguage());
-                }
-            }
-        });
+
 
         imageSpeak.setOnClickListener(v ->  {
                 //Speech to Text
@@ -101,11 +93,29 @@ public class MainActivity extends AppCompatActivity {
                 }catch (ActivityNotFoundException a){
                     Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
                 }
-
+                //Text to Speech
+                textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int i) {
+                        if(i != TextToSpeech.ERROR) {
+                            textToSpeech.setLanguage(language.getSpeechLanguage());
+                        }
+                    }
+                });
         });
 
         send.setOnClickListener(v ->  {
             String content = inputText.getText().toString();
+
+            //Text to Speech
+            textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int i) {
+                    if(i != TextToSpeech.ERROR) {
+                        textToSpeech.setLanguage(language.getSpeechLanguage());
+                    }
+                }
+            });
 
             if(!content.equals("")) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
@@ -149,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
-                msgList.add(new Msg(translateTextGlobal,Msg.TYPE_RECEIVED));
+                msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED));
                 adapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
             }

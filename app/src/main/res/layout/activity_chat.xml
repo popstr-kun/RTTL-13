@@ -31,7 +31,7 @@
                 android:id="@+id/btn_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
+                android:textSize="20dp"
                 android:layout_weight="0.1"
                 android:text="Input" />
         </LinearLayout>
@@ -64,6 +64,7 @@
             <Button
                 android:id="@+id/btn_output"
                 android:layout_width="match_parent"
+                android:textSize="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
                 android:text="Output" />
