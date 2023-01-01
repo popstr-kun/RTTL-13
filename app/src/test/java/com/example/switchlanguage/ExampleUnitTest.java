@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.switchlanguage;
 
 import org.junit.Test;
 
