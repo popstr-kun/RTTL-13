@@ -2,7 +2,6 @@ package com.example.rttl_13;
 
 
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 
 import android.widget.Button;
@@ -10,14 +9,12 @@ import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
 
@@ -41,19 +38,20 @@ public class ADActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.ad);
 
+
             MobileAds.initialize(this, initializationStatus -> {
                 loadRewardedInterstitialAd();
             });
 
-
-            adView = findViewById(R.id.adBanner);
+            adView = findViewById(R.id.adBanner);///橫幅廣告
             AdRequest adRequest = new AdRequest.Builder().build();
             adView.loadAd(adRequest);
 
+
             loadRewardedInterstitialAd();
-            retryButton = findViewById(R.id.button2);
+            retryButton = findViewById(R.id.adbutton);
             retryButton.setOnClickListener(view -> {
-                        showRewardedVideo();
+                        showRewardedVideo();//AD開始
                     });
 
         }
