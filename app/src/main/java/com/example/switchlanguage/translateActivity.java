@@ -3,6 +3,7 @@ package com.example.switchlanguage;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -20,17 +21,9 @@ import java.util.ArrayList;
 public class translateActivity extends AppCompatActivity {
     private EditText ed_book;
     private ListView listView;
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> items = new ArrayList<>();
-    private SQLiteDatabase dbrw;
-    private String[][] language_name = new String[][]{{"英文", "繁體中文", "簡體中文", "德文", "法文"," 義大利","日文"},{"US","TW","","","","",""}};
 
+    private String[] language_name = new String[]{"英文", "繁體中文", "簡體中文", "德文", "法文","義大利","日文"};
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        dbrw.close();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +38,15 @@ public class translateActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String msg = language_name[1][position];
+                /*-------------------------------------------------------------------------------------
+                String msg = String.format("%d",position);
                 setToast(translateActivity.this, msg);
+                -------------------------------------------------------------------------------------*/
+                Intent intent = new Intent();
+                intent.setClass(translateActivity.this, MainActivity.class);
+                intent.putExtra("name", position); //可放所有基本類別
+                startActivity(intent);
+                /*-------------------------------------------------------------------------------------*/
             }
         });
     }
@@ -56,7 +56,7 @@ public class translateActivity extends AppCompatActivity {
         }
 
         private void setAdapter() {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, language_name[0]);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, language_name);
             listView.setAdapter(adapter);
         }
 
