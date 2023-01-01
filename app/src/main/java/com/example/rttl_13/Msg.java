@@ -18,4 +18,5 @@ public class Msg {
     public int getType() {
         return type;
     }
+    public String getString(){return content;}
 }

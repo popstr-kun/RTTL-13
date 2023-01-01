@@ -117,6 +117,17 @@ public class MainActivity extends AppCompatActivity {
         btnMsgSend.setOnClickListener(v ->  {
             String content = inputText.getText().toString();
 
+            //Text to Speech
+            textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+                if(i != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(language.getSpeechLanguage());
+                }
+                else {
+                    Log.e("error","Text to Speech 初始化失敗");
+                    Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+                }
+            });
+
             if(!"".equals(content)) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
                 adapter.notifyItemInserted(msgList.size()-1);
@@ -145,6 +156,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        adapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int msg) {
+                Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
+                System.out.println(msgList.get(msg).getString());
+            }
+
+            @Override
+            public void onItemLongClick(int msg) {
+
+            }
+        });
     }
 
     @Override
@@ -167,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
+
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED));
                 adapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);

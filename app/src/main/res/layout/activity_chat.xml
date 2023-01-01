@@ -11,6 +11,7 @@
         android:id="@+id/msg_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="539dp"
+
         android:layout_weight="1">
 
     </androidx.recyclerview.widget.RecyclerView>

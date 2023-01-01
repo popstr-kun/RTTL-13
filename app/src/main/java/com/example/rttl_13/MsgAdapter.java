@@ -3,6 +3,7 @@ package com.example.rttl_13;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
+    private OnItemClickListener onItemClickListener;
 
     private List<Msg> list;
     public MsgAdapter(List<Msg> list){
@@ -24,6 +26,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         LinearLayout rightLayout;
         TextView right_msg;
 
+        LinearLayout topLayout;
         TextView name;
         View avatar;
 
@@ -37,6 +40,8 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
 
             name = view.findViewById(R.id.name);
             avatar = view.findViewById(R.id.avatar);
+
+            topLayout = view.findViewById(R.id.topLinear);
         }
     }
 
@@ -53,6 +58,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         if(msg.getType() == Msg.TYPE_RECEIVED){
             //如果是收到的消息，则显示左边的消息布局，将右边的消息布局隐藏
             holder.leftLayout.setVisibility(View.VISIBLE);
+            holder.topLayout.setVisibility(View.VISIBLE);
             holder.left_msg.setText(msg.getContent());
 
 
@@ -63,16 +69,44 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.right_msg.setText(msg.getContent());
 
-            holder.name.setVisibility(View.GONE);
-            holder.avatar.setVisibility(View.GONE);
-
+            //
             //同样使用View.GONE
             holder.leftLayout.setVisibility(View.GONE);
+            holder.topLayout.setVisibility(View.GONE);
         }
+
+        holder.leftLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(position);
+                }
+            }
+        });
+        holder.leftLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemLongClick(position);
+                }
+                return true;
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int msg);
+        void onItemLongClick(int msg);
+
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 }
