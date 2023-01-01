@@ -2,12 +2,9 @@ package com.example.rttl_13;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
@@ -18,45 +15,60 @@ import android.os.Looper;
 import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * @author SHEN_KUN
+ */
 public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech textToSpeech;
     private String translateTextGlobal;
     Languages language = new Languages(Locale.US,Locale.TAIWAN);
 
-    private List<Msg>           msgList = new ArrayList<>();
-    private RecyclerView        msgRecyclerView;
-    private EditText            inputText;
-    private Button              send;
-    private LinearLayoutManager layoutManager;
-    private MsgAdapter          adapter;
+    private List<Msg>     msgList = new ArrayList<>();
+    private RecyclerView  msgRecyclerView;
+    private EditText      inputText;
+    private MsgAdapter    adapter;
+
 
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
     Translate translate = options.getService();
 
-
+    @Override
+    protected void onDestroy() {
+        if(textToSpeech != null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
+        }
+        super.onDestroy();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // 不管是否正在朗读TTS都被打断
+        textToSpeech.stop();
+        // 关闭，释放资源
+        textToSpeech.shutdown();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //设置竖屏
+        //设置竖屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         ImageView imageSpeak = findViewById(R.id.image_speak);
         Button btnInput      = findViewById(R.id.btn_input);
@@ -64,25 +76,28 @@ public class MainActivity extends AppCompatActivity {
         ImageView imageSwap  = findViewById(R.id.image_swap);
         msgRecyclerView      = findViewById(R.id.msg_recycler_view);
         inputText            = findViewById(R.id.input_text);
-        send                 = findViewById(R.id.send);
-        layoutManager        = new LinearLayoutManager(this);
+        Button btnMsgSend    = findViewById(R.id.send);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         adapter              = new MsgAdapter(msgList = getData());
 
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(adapter);
 
+        internetCheck();
+
+        //Text to Speech
+        textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+            if(i != TextToSpeech.ERROR) {
+                textToSpeech.setLanguage(language.getSpeechLanguage());
+            }
+            else {
+                Log.e("error","Text to Speech 初始化失敗");
+                Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+            }
+        });
+
         btnInput.setText(String.format("輸入\n%s",language.getInputLanguage()));
-        btnOutput.setText(String.format("結果\n%s",language.getOutputLanguage()));
-
-        // 判斷有無連接網路
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo info = cm.getActiveNetworkInfo();
-        if( info == null || !info.isConnected() )
-        {
-            Toast.makeText(getApplicationContext(),"無網路連接，請連接後重試", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
 
 
         imageSpeak.setOnClickListener(v ->  {
@@ -96,35 +111,17 @@ public class MainActivity extends AppCompatActivity {
                 }catch (ActivityNotFoundException a){
                     Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
                 }
-                //Text to Speech
-                textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int i) {
-                        if(i != TextToSpeech.ERROR) {
-                            textToSpeech.setLanguage(language.getSpeechLanguage());
-                        }
-                    }
-                });
         });
 
-        send.setOnClickListener(v ->  {
+        btnMsgSend.setOnClickListener(v ->  {
             String content = inputText.getText().toString();
 
-            //Text to Speech
-            textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int i) {
-                    if(i != TextToSpeech.ERROR) {
-                        textToSpeech.setLanguage(language.getSpeechLanguage());
-                    }
-                }
-            });
-
-            if(!content.equals("")) {
+            if(!"".equals(content)) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
                 adapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
-                inputText.setText("");//清空输入框中的内容
+                //清空输入框中的内容
+                inputText.setText("");
                 runTranslation(translate,content,language.getOutputLanguage());
             }
         });
@@ -132,14 +129,9 @@ public class MainActivity extends AppCompatActivity {
         imageSwap.setOnClickListener(v -> {
             language.ioLanguageSwap();
             btnInput.setText(String.format("輸入\n%s",language.getInputLanguage()));
-            btnOutput.setText(String.format("結果\n%s",language.getOutputLanguage()));
+            btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
         });
 
-//        btnRepeat.setOnClickListener(v -> {
-//            if(repeatText != null){
-//                textToSpeech.speak(repeatText,TextToSpeech.QUEUE_FLUSH,null);
-//            }
-//        });
     }
 
     @Override
@@ -170,45 +162,45 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
-
     //必須使用
     private void runTranslation(Translate translate,String text,String targetLanguage){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
-                String translatedText = translation.getTranslatedText();
-                System.out.println(translatedText);
-                //outputText.setText(String.format("結果(%s): %s ",language.getOutputLanguage(),translatedText));
-                try {
-                    Thread.sleep(100);
-                    if(translatedText != null){
-                        translateTextGlobal = translatedText;
-                        textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
-                        Message msg = new Message();
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        new Thread(() -> {
+            Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
+            String translatedText = translation.getTranslatedText();
+            System.out.println(translatedText);
+            //outputText.setText(String.format("結果(%s): %s ",language.getOutputLanguage(),translatedText));
+            try {
+                Thread.sleep(100);
+                if(translatedText != null){
+                    translateTextGlobal = translatedText;
+                    textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
+                    Message msg = new Message();
+                    msg.what = 1;
+                    handler.sendMessage(msg);
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }).start();
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        textToSpeech.stop();
-    }
-
     private List<Msg> getData(){
         List<Msg> list = new ArrayList<>();
-        list.add(new Msg("哈囉~歡迎使用即時翻譯系統",Msg.TYPE_RECEIVED));
+        list.add(new Msg("哈囉您好~歡迎使用即時翻譯系統\n\n本系統提供各國語音&語言翻譯",Msg.TYPE_RECEIVED));
         return list;
     }
+
+    private void internetCheck(){
+        // 判斷有無連接網路
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        if( info == null || !info.isConnected() )
+        {
+            Toast.makeText(getApplicationContext(),"無網路連接，請連接後重試", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
 
 }
 
