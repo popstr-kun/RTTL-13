@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-     Button btn;
+     Button btn_rt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        btn = findViewById(R.id.button);
-        btn.setOnClickListener((View v)-> {
+        btn_rt = findViewById(R.id.button_to_return);
+        btn_rt.setOnClickListener((View v)-> {
             Intent intent = new Intent(this, ADActivity.class);
             startActivity(intent);
 
