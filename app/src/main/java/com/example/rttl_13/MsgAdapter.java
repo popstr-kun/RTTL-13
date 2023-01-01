@@ -24,6 +24,9 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         LinearLayout rightLayout;
         TextView right_msg;
 
+        TextView name;
+        View avatar;
+
         public ViewHolder(View view){
             super(view);
             leftLayout = view.findViewById(R.id.left_layout);
@@ -31,6 +34,9 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
 
             rightLayout = view.findViewById(R.id.right_layout);
             right_msg = view.findViewById(R.id.right_msg);
+
+            name = view.findViewById(R.id.name);
+            avatar = view.findViewById(R.id.avatar);
         }
     }
 
@@ -49,12 +55,16 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
             holder.leftLayout.setVisibility(View.VISIBLE);
             holder.left_msg.setText(msg.getContent());
 
+
             //注意此处隐藏右面的消息布局用的是 View.GONE
             holder.rightLayout.setVisibility(View.GONE);
         }else if(msg.getType() == Msg.TYPE_SEND){
             //如果是发出的消息，则显示右边的消息布局，将左边的消息布局隐藏
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.right_msg.setText(msg.getContent());
+
+            holder.name.setVisibility(View.GONE);
+            holder.avatar.setVisibility(View.GONE);
 
             //同样使用View.GONE
             holder.leftLayout.setVisibility(View.GONE);
