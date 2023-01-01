@@ -16,6 +16,7 @@ import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -132,6 +133,18 @@ public class MainActivity extends AppCompatActivity {
             btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
         });
 
+        msgRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if(oldBottom > bottom){
+                    msgRecyclerView.post(()->{
+                       if(adapter.getItemCount() > 0 ){
+                           msgRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                       }
+                    });
+                }
+            }
+        });
     }
 
     @Override
