@@ -24,11 +24,7 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.button);
         btn.setOnClickListener((View v)-> {
             Intent intent = new Intent(this, ADActivity.class);
-            try{
-                startActivity(intent);
-            }catch (ActivityNotFoundException e){
-                System.out.println("錯誤"+ e);
-            }
+            startActivity(intent);
 
         });
     }
