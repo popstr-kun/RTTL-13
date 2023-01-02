@@ -198,17 +198,6 @@ public class MainActivity extends AppCompatActivity {
         btnMsgSend.setOnClickListener(v ->  {
             String content = inputText.getText().toString();
 
-            //Text to Speech
-            textToSpeech = new TextToSpeech(MainActivity.this, i -> {
-                if(i != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(language.getSpeechLanguage());
-                }
-                else {
-                    Log.e("error","Text to Speech 初始化失敗");
-                    Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
-                }
-            });
-
             if(!"".equals(content)) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
 
@@ -223,6 +212,16 @@ public class MainActivity extends AppCompatActivity {
 
         imageSwap.setOnClickListener(v -> {
             language.ioLanguageSwap();
+            //Text to Speech
+            textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+                if(i != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(language.getSpeechLanguage());
+                }
+                else {
+                    Log.e("error","Text to Speech 初始化失敗");
+                    Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+                }
+            });
             int i;
             i=keyInput;
             keyInput = keyOutput;
