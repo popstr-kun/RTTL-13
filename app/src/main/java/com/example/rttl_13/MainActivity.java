@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
@@ -21,6 +22,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
@@ -103,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         //设置竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        this.setTitle("即時翻譯系統");
+
+        ADActivity adActivity = new ADActivity(getApplicationContext());
+        AdView adView = findViewById(R.id.adBanner);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+        adActivity.loadRewardedInterstitialAd(getApplicationContext());
+
 
         ImageView imageSpeak = findViewById(R.id.image_speak);
         Button btnInput      = findViewById(R.id.btn_input);
@@ -119,8 +131,6 @@ public class MainActivity extends AppCompatActivity {
         msgRecyclerView.setAdapter(msgAdapter);
 
         internetCheck();
-
-
 
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
         btnInput.setOnClickListener((View v)->{
@@ -211,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
             if(!"".equals(content)) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
 
-
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 //清空输入框中的内容
@@ -259,11 +268,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(int msg) {
-                Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
-                textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
-                System.out.println(msgList.get(msg).getString());
-            }
 
+                textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+                    if(i != TextToSpeech.ERROR) {
+                        textToSpeech.setLanguage(language.getSpeechLanguage());
+                        Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
+                        textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
+                        System.out.println(msgList.get(msg).getString());
+                    }
+                    else {
+                        Log.e("error","Text to Speech 初始化失敗");
+                        Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+            }
             @Override
             public void onItemLongClick(int msg) {
 
@@ -277,13 +297,9 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 200){
             if(resultCode == RESULT_OK && data != null){
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
                 msgList.add(new Msg(result.get(0),Msg.TYPE_SEND));
-
                 msgAdapter.notifyItemInserted(msgList.size()-1);
-
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
-
                 runTranslation(translate,result.get(0),language.getOutputLanguage());
             }
         }
@@ -293,11 +309,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
-
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED));
-
                 msgAdapter.notifyItemInserted(msgList.size()-1);
-
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
             }
             return false;
@@ -310,7 +323,6 @@ public class MainActivity extends AppCompatActivity {
             Translation translation = translate.translate(text, com.google.cloud.translate.Translate.TranslateOption.targetLanguage(targetLanguage));
             String translatedText = translation.getTranslatedText();
             System.out.println(translatedText);
-            //outputText.setText(String.format("結果(%s): %s ",language.getOutputLanguage(),translatedText));
             try {
                 Thread.sleep(100);
                 if(translatedText != null){
