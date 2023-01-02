@@ -34,25 +34,40 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     /*語言列表---------------------------------------------------------------------------------*/
-    private String[][] language_country = new String[][]{
-            {"ZH","TW"},
-            {"zh","CN"},
-            {"fr","FR"},
-            {"de","DE"},
-            {"it","IT"},
-            {"ja","JP"},
-            {"ko","KR"},
-            {"en","GB"},
-            {"en","US"},
-            {"en","CA"},
-            {"fr","CA"},
+    private String[] countryName = new String[]{
+            "台灣",
+            "支那",
+            "法國",
+            "德國",
+            "義大利",
+            "日本",
+            "韓國",
+            "英國",
+            "美國",
+            "加拿大-英文",
+            "加拿大-法文"
+    };
+    private Locale[] languageis = new Locale[]{
+            Locale.TRADITIONAL_CHINESE,
+            Locale.SIMPLIFIED_CHINESE,
+            Locale.FRANCE,
+            Locale.GERMANY,
+            Locale.ITALY,
+            Locale.JAPAN,
+            Locale.KOREA,
+            Locale.UK,
+            Locale.US,
+            Locale.CANADA,
+            Locale.CANADA_FRENCH
     };
     /*---------------------------------------------------------------------------------------*/
+
+    private static int keyInput = 0,keyOutput =8;
 
     private TextToSpeech textToSpeech;
     private String translateTextGlobal;
 
-    Languages language = new Languages(Locale.US,Locale.TAIWAN);
+    Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
 
     private List<Msg>     msgList = new ArrayList<>();
     private RecyclerView  msgRecyclerView;
@@ -138,9 +153,16 @@ public class MainActivity extends AppCompatActivity {
             EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
                 輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
             -------------------------------------------------------------------------*/
-            //language = new Languages(Locale.TAIWAN,Locale.US);
+            if(switchKeyintput == 0){
+                keyInput = languageKeyintput;
+                language.setInputLanguage(languageis[keyInput]);
+            }else if(switchKeyintput == 1){
+                keyOutput = languageKeyintput;
+                language.setOutputLanguage(languageis[keyOutput]);
+            }
+
             System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyintput);
-            System.out.println("languageKeyintput：" + languageKeyintput + ", 語言："+ language_country[languageKeyintput][0] + ", 國家：" + language_country[languageKeyintput][1]);
+            System.out.println("languageKeyintput：" + languageKeyintput + ", 語言："+ countryName[languageKeyintput] + ", 國家：" + countryName[languageKeyintput]);
         }
         /*-----------------------------------------------------------------*/
 
@@ -156,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnInput.setText(String.format("輸入\n%s",language.getInputLanguage()));
-        btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
+        btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
+        btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
 
 
         imageSpeak.setOnClickListener(v ->  {

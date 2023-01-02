@@ -15,17 +15,17 @@ import android.widget.Toast;
 public class Translate extends AppCompatActivity {
     private ListView listView;
     private String[] language_name = new String[]{
-            "TRADITIONAL CHINESE",
-            "SIMPLIFIED CHINESE",
-            "FRANCE",
-            "GERMANY",
-            "ITALY",
-            "JAPAN",
-            "KOREA",
-            "UK",
-            "US",
-            "CANADA",
-            "CANADA_FRENCH"
+            "台灣",
+            "支那",
+            "法國",
+            "德國",
+            "義大利",
+            "日本",
+            "韓國",
+            "英國",
+            "美國",
+            "加拿大-英文",
+            "加拿大-法文"
     };
 
     @Override
