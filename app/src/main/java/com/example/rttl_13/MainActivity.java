@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
                 輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
             -------------------------------------------------------------------------*/
-            System.out.println("switchKeyintput(0為輸入，1為輸出)：" + switchKeyintput);
+            System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyintput);
             System.out.println("languageKeyintput：" + languageKeyintput + ", 語言："+ language_country[languageKeyintput][0] + ", 國家：" + language_country[languageKeyintput][1]);
         }
         /*-----------------------------------------------------------------*/
