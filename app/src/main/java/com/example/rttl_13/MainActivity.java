@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Msg>     msgList = new ArrayList<>();
     private RecyclerView  msgRecyclerView;
     private EditText      inputText;
-    private MsgAdapter    adapter;
+    private MsgAdapter    msgAdapter;
 
 
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
         inputText            = findViewById(R.id.input_text);
         Button btnMsgSend    = findViewById(R.id.send);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter              = new MsgAdapter(msgList = getData());
+        msgAdapter           = new MsgAdapter(msgList = getData());
 
         msgRecyclerView.setLayoutManager(layoutManager);
-        msgRecyclerView.setAdapter(adapter);
+        msgRecyclerView.setAdapter(msgAdapter);
 
         internetCheck();
 
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(!"".equals(content)) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
-                adapter.notifyItemInserted(msgList.size()-1);
+                msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 //清空输入框中的内容
                 inputText.setText("");
@@ -149,15 +149,15 @@ public class MainActivity extends AppCompatActivity {
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if(oldBottom > bottom){
                     msgRecyclerView.post(()->{
-                       if(adapter.getItemCount() > 0 ){
-                           msgRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                       if(msgAdapter.getItemCount() > 0 ){
+                           msgRecyclerView.scrollToPosition(msgAdapter.getItemCount() - 1);
                        }
                     });
                 }
             }
         });
 
-        adapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
+        msgAdapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int msg) {
                 Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
                 msgList.add(new Msg(result.get(0),Msg.TYPE_SEND));
-                adapter.notifyItemInserted(msgList.size()-1);
+                msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
 
                 runTranslation(translate,result.get(0),language.getOutputLanguage());
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             if(msg.what == 1){
 
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED));
-                adapter.notifyItemInserted(msgList.size()-1);
+                msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
             }
             return false;
