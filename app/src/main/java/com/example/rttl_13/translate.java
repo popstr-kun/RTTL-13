@@ -13,7 +13,17 @@ import android.widget.Toast;
 
 public class translate extends AppCompatActivity {
     private ListView listView;
-    private String[] language_name = new String[]{"英文", "繁體中文", "簡體中文", "德文", "法文","義大利","日文"};
+
+    private String[] language_name = new String[]{
+            "英文",
+            "繁體中文",
+            "簡體中文",
+            "德文",
+            "法文",
+            "義大利",
+            "日文"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
