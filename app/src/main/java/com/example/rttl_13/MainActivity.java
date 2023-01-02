@@ -354,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
         List<Msg> list = new ArrayList<>();
         language.setOutputLanguage(languageis[0]);
         list.add(new Msg("哈囉您好~歡迎使用即時翻譯系統\n本系統提供各國語音&語言翻譯。\n\n1.短按翻譯後語言可重新朗讀。\n2.長按翻譯後語言可複製。",Msg.TYPE_RECEIVED,language.getSpeechLanguage()));
+        language.setOutputLanguage(languageis[8]);
         return list;
     }
 
