@@ -33,6 +33,9 @@ import java.util.Locale;
  */
 public class MainActivity extends AppCompatActivity {
 
+    /*語言列表---------------------------------------------------------------------------------*/
+    private String[][] language_country = new String[][]{{"EN","US"},{"ZH","TW"}};
+    /*---------------------------------------------------------------------------------------*/
     private TextToSpeech textToSpeech;
     private String translateTextGlobal;
     Languages language = new Languages(Locale.US,Locale.TAIWAN);
@@ -116,8 +119,9 @@ public class MainActivity extends AppCompatActivity {
             EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
                 輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
             -------------------------------------------------------------------------*/
-            System.out.print("switchKeyintput：" + switchKeyintput + " , ");
+            System.out.println("switchKeyintput(0為輸入，1為輸出)：" + switchKeyintput);
             System.out.println("languageKeyintput：" + languageKeyintput);
+            System.out.println("語言："+ language_country[languageKeyintput][0] + ", 國家：" + language_country[languageKeyintput][1]);
         }
         /*-----------------------------------------------------------------*/
 
