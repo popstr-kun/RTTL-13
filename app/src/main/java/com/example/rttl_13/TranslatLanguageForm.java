@@ -34,6 +34,8 @@ public class TranslatLanguageForm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translate);
 
+        this.setTitle("語言選擇");
+
         listView = findViewById(R.id.listView);
 
         /*接收輸入or輸出按鈕參數-----------------------------------------------------------------------------*/
