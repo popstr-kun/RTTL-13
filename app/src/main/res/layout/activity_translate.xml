@@ -13,11 +13,11 @@
         android:text="語言:"
         android:textColor="@android:color/black"
         android:textSize="22sp"
-        app:layout_constraintBottom_toBottomOf="@+id/ed_book"
+        app:layout_constraintBottom_toBottomOf="@+id/ed_Text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ed_book" />
+        app:layout_constraintTop_toTopOf="@+id/ed_Text" />
     <EditText
-        android:id="@+id/ed_book"
+        android:id="@+id/ed_Text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -36,7 +36,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
 
-        app:layout_constraintStart_toEndOf="@+id/ed_book"
+        app:layout_constraintStart_toEndOf="@+id/ed_Text"
         app:srcCompat="@android:drawable/ic_menu_search" />
 
     <LinearLayout
@@ -48,7 +48,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ed_book" />
+        app:layout_constraintTop_toBottomOf="@+id/ed_Text" />
     <ListView
         android:id="@+id/listView"
         android:layout_width="0dp"

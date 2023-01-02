@@ -19,9 +19,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class translateActivity extends AppCompatActivity {
-    private EditText ed_book;
     private ListView listView;
-
     private String[] language_name = new String[]{"英文", "繁體中文", "簡體中文", "德文", "法文","義大利","日文"};
 
 
@@ -29,7 +27,6 @@ public class translateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translate);
-        ed_book = findViewById(R.id.ed_book);
         listView = findViewById(R.id.listView);
 
         findViews();
@@ -51,17 +48,17 @@ public class translateActivity extends AppCompatActivity {
         });
     }
 
-        public void setToast(Context context, String text) {
-            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
-        }
+    public void setToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+    }
 
-        private void setAdapter() {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, language_name);
-            listView.setAdapter(adapter);
-        }
+    private void setAdapter() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, language_name);
+        listView.setAdapter(adapter);
+    }
 
-        private void findViews() {
-            listView = (ListView) findViewById(R.id.listView);
-        }
+    private void findViews() {
+        listView = (ListView) findViewById(R.id.listView);
+    }
 
 }
