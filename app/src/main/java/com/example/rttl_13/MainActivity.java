@@ -106,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
         /*-----------------------------------------------------------------*/
 
         /*接收回傳值---------------------------------------------------------*/
-        Bundle bundle = this.getIntent().getExtras();
-        if (bundle != null) {
-            int languageKeyintput = bundle.getInt("languageKey");
-            int switchKeyintput = bundle.getInt("switchKey");
+        Bundle bundleKey = this.getIntent().getExtras();
+        if (bundleKey != null) {
+            int languageKeyintput = bundleKey.getInt("languageKey");
+            int switchKeyintput = bundleKey.getInt("switchKey");
             /*回傳值--------------------------------------------------------------------
             switchKeyintput：表示是輸入按鈕的參數(0) or 輸出按鈕的參數(1)
             languageKeyintput：表示語言對應的編號
