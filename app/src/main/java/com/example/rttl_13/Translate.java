@@ -9,19 +9,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class translate extends AppCompatActivity {
+public class Translate extends AppCompatActivity {
     private ListView listView;
-
     private String[] language_name = new String[]{
-            "英文",
-            "繁體中文",
-            "簡體中文",
-            "德文",
-            "法文",
-            "義大利",
-            "日文"
+            "TRADITIONAL CHINESE",
+            "SIMPLIFIED CHINESE",
+            "FRANCE",
+            "GERMANY",
+            "ITALY",
+            "JAPAN",
+            "KOREA",
+            "UK",
+            "US",
+            "CANADA",
+            "CANADA_FRENCH"
     };
 
     @Override
@@ -29,11 +33,13 @@ public class translate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translate);
 
+        listView = findViewById(R.id.listView);
+
         /*接收輸入or輸出按鈕參數-----------------------------------------------------------------------------*/
         Intent intent_language_switch = this.getIntent();
         int languageswitchkey = intent_language_switch.getIntExtra("switchKey",0);
         /*-----------------------------------------------------------------------------------------------*/
-        listView = findViewById(R.id.listView);
+
         findViews();
         setAdapter();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -44,7 +50,7 @@ public class translate extends AppCompatActivity {
                 setToast(translateActivity.this, msg);
                 -------------------------------------------------------------------------------------*/
                 Intent intent = new Intent();
-                intent.setClass(translate.this, MainActivity.class);
+                intent.setClass(Translate.this, MainActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("languageKey", position); //可放所有基本類別
                 bundle.putInt("switchKey", languageswitchkey);

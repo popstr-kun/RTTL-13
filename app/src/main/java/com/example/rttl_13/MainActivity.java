@@ -21,7 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.google.cloud.translate.Translate;
+
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 import java.util.ArrayList;
@@ -35,18 +35,23 @@ public class MainActivity extends AppCompatActivity {
 
     /*語言列表---------------------------------------------------------------------------------*/
     private String[][] language_country = new String[][]{
-            {"EN","US"},
             {"ZH","TW"},
-            {"",""},
-            {"",""},
-            {"",""},
-            {"",""},
-            {"",""}
+            {"zh","CN"},
+            {"fr","FR"},
+            {"de","DE"},
+            {"it","IT"},
+            {"ja","JP"},
+            {"ko","KR"},
+            {"en","GB"},
+            {"en","US"},
+            {"en","CA"},
+            {"fr","CA"},
     };
     /*---------------------------------------------------------------------------------------*/
 
     private TextToSpeech textToSpeech;
     private String translateTextGlobal;
+
     Languages language = new Languages(Locale.US,Locale.TAIWAN);
 
     private List<Msg>     msgList = new ArrayList<>();
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
-    Translate translate = options.getService();
+    com.google.cloud.translate.Translate translate = options.getService();
 
     @Override
     protected void onDestroy() {
@@ -106,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
         btnInput.setOnClickListener((View v)->{
             int switchKey = 0;
-            Intent intent = new Intent(this,translate.class);
+
+            Intent intent = new Intent(this, Translate.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
         });
@@ -115,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         /*跳轉頁面(輸出按鈕)--------------------------------------------------*/
         btnOutput.setOnClickListener((View v)->{
             int switchKey = 1;
-            Intent intent = new Intent(this,translate.class);
+            Intent intent = new Intent(this, Translate.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
         });
@@ -132,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
                 輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
             -------------------------------------------------------------------------*/
+            //language = new Languages(Locale.TAIWAN,Locale.US);
             System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyintput);
             System.out.println("languageKeyintput：" + languageKeyintput + ", 語言："+ language_country[languageKeyintput][0] + ", 國家：" + language_country[languageKeyintput][1]);
         }
@@ -262,9 +269,9 @@ public class MainActivity extends AppCompatActivity {
     });
 
     //必須使用
-    private void runTranslation(Translate translate,String text,String targetLanguage){
+    private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage){
         new Thread(() -> {
-            Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
+            Translation translation = translate.translate(text, com.google.cloud.translate.Translate.TranslateOption.targetLanguage(targetLanguage));
             String translatedText = translation.getTranslatedText();
             System.out.println(translatedText);
             //outputText.setText(String.format("結果(%s): %s ",language.getOutputLanguage(),translatedText));
