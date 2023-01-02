@@ -9,10 +9,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class Translate extends AppCompatActivity {
+public class TranslatLanguageForm extends AppCompatActivity {
     private ListView listView;
     private String[] language_name = new String[]{
             "台灣",
@@ -50,7 +49,7 @@ public class Translate extends AppCompatActivity {
                 setToast(translateActivity.this, msg);
                 -------------------------------------------------------------------------------------*/
                 Intent intent = new Intent();
-                intent.setClass(Translate.this, MainActivity.class);
+                intent.setClass(TranslatLanguageForm.this, MainActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("languageKey", position); //可放所有基本類別
                 bundle.putInt("switchKey", languageswitchkey);

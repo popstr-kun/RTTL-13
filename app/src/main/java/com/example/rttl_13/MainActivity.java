@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         btnInput.setOnClickListener((View v)->{
             int switchKey = 0;
 
-            Intent intent = new Intent(this, Translate.class);
+            Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
         });
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         /*跳轉頁面(輸出按鈕)--------------------------------------------------*/
         btnOutput.setOnClickListener((View v)->{
             int switchKey = 1;
-            Intent intent = new Intent(this, Translate.class);
+            Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
         });
