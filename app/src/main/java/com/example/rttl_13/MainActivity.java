@@ -33,18 +33,51 @@ import java.util.Locale;
  */
 public class MainActivity extends AppCompatActivity {
 
+    /*語言列表---------------------------------------------------------------------------------*/
+    private String[] countryName = new String[]{
+            "台灣",
+            "支那",
+            "法國",
+            "德國",
+            "義大利",
+            "日本",
+            "韓國",
+            "英國",
+            "美國",
+            "加拿大-英文",
+            "加拿大-法文"
+    };
+    private Locale[] languageis = new Locale[]{
+            Locale.TRADITIONAL_CHINESE,
+            Locale.SIMPLIFIED_CHINESE,
+            Locale.FRANCE,
+            Locale.GERMANY,
+            Locale.ITALY,
+            Locale.JAPAN,
+            Locale.KOREA,
+            Locale.UK,
+            Locale.US,
+            Locale.CANADA,
+            Locale.CANADA_FRENCH
+    };
+    /*---------------------------------------------------------------------------------------*/
+
+    private static int keyInput = 0,keyOutput =8;
+
     private TextToSpeech textToSpeech;
     private String translateTextGlobal;
-    Languages language = new Languages(Locale.US,Locale.TAIWAN);
+
+    Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
 
     private List<Msg>     msgList = new ArrayList<>();
     private RecyclerView  msgRecyclerView;
     private EditText      inputText;
+
     private MsgAdapter    msgAdapter;
 
 
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
-    Translate translate = options.getService();
+    com.google.cloud.translate.Translate translate = options.getService();
 
     @Override
     protected void onDestroy() {
@@ -79,20 +112,21 @@ public class MainActivity extends AppCompatActivity {
         inputText            = findViewById(R.id.input_text);
         Button btnMsgSend    = findViewById(R.id.send);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
         msgAdapter           = new MsgAdapter(msgList = getData());
 
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(msgAdapter);
 
-        int LanguageStatus = 0;
-
-
         internetCheck();
+
+
 
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
         btnInput.setOnClickListener((View v)->{
             int switchKey = 0;
-            Intent intent = new Intent(this,translate.class);
+
+            Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
         });
@@ -101,27 +135,36 @@ public class MainActivity extends AppCompatActivity {
         /*跳轉頁面(輸出按鈕)--------------------------------------------------*/
         btnOutput.setOnClickListener((View v)->{
             int switchKey = 1;
-            Intent intent = new Intent(this,translate.class);
+            Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
         });
         /*-----------------------------------------------------------------*/
 
         /*接收回傳值---------------------------------------------------------*/
-        Bundle bundle = this.getIntent().getExtras();
-        if (bundle != null) {
-            int languageKeyintput = bundle.getInt("languageKey");
-            int switchKeyintput = bundle.getInt("switchKey");
+        Bundle bundleKey = this.getIntent().getExtras();
+        if (bundleKey != null) {
+            int languageKeyintput = bundleKey.getInt("languageKey");
+            int switchKeyintput = bundleKey.getInt("switchKey");
             /*回傳值--------------------------------------------------------------------
             switchKeyintput：表示是輸入按鈕的參數(0) or 輸出按鈕的參數(1)
             languageKeyintput：表示語言對應的編號
             EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
                 輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
             -------------------------------------------------------------------------*/
-            System.out.print("switchKeyintput：" + switchKeyintput + " , ");
-            System.out.println("languageKeyintput：" + languageKeyintput);
+            if(switchKeyintput == 0){
+                keyInput = languageKeyintput;
+                language.setInputLanguage(languageis[keyInput]);
+            }else if(switchKeyintput == 1){
+                keyOutput = languageKeyintput;
+                language.setOutputLanguage(languageis[keyOutput]);
+            }
+
+            System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyintput);
+            System.out.println("languageKeyintput：" + languageKeyintput + ", 語言："+ countryName[languageKeyintput] + ", 國家：" + countryName[languageKeyintput]);
         }
         /*-----------------------------------------------------------------*/
+
 
         //Text to Speech
         textToSpeech = new TextToSpeech(MainActivity.this, i -> {
@@ -134,21 +177,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnInput.setText(String.format("輸入\n%s",language.getInputLanguage()));
-        btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
+        btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
+        btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
 
 
         imageSpeak.setOnClickListener(v ->  {
-                //Speech to Text
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language.getInputLanguage());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說～");
-                try{
-                    startActivityForResult(intent,200);
-                }catch (ActivityNotFoundException a){
-                    Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
-                }
+            //Speech to Text
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language.getInputLanguage());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說～");
+            try{
+                startActivityForResult(intent,200);
+            }catch (ActivityNotFoundException a){
+                Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
+            }
         });
 
         btnMsgSend.setOnClickListener(v ->  {
@@ -167,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
 
             if(!"".equals(content)) {
                 msgList.add(new Msg(content,Msg.TYPE_SEND));
+
+
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 //清空输入框中的内容
@@ -177,8 +222,23 @@ public class MainActivity extends AppCompatActivity {
 
         imageSwap.setOnClickListener(v -> {
             language.ioLanguageSwap();
-            btnInput.setText(String.format("輸入\n%s",language.getInputLanguage()));
-            btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
+            //Text to Speech
+            textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+                if(i != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(language.getSpeechLanguage());
+                }
+                else {
+                    Log.e("error","Text to Speech 初始化失敗");
+                    Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+                }
+            });
+            int i;
+            i=keyInput;
+            keyInput = keyOutput;
+            keyOutput = i;
+            btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
+            btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
+
         });
 
         msgRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -186,15 +246,17 @@ public class MainActivity extends AppCompatActivity {
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if(oldBottom > bottom){
                     msgRecyclerView.post(()->{
-                       if(msgAdapter.getItemCount() > 0 ){
-                           msgRecyclerView.scrollToPosition(msgAdapter.getItemCount() - 1);
-                       }
+                        if(msgAdapter.getItemCount() > 0 ){
+                            msgRecyclerView.scrollToPosition(msgAdapter.getItemCount() - 1);
+                        }
                     });
                 }
             }
         });
 
+
         msgAdapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
+
             @Override
             public void onItemClick(int msg) {
                 Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
@@ -217,7 +279,9 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
                 msgList.add(new Msg(result.get(0),Msg.TYPE_SEND));
+
                 msgAdapter.notifyItemInserted(msgList.size()-1);
+
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
 
                 runTranslation(translate,result.get(0),language.getOutputLanguage());
@@ -231,7 +295,9 @@ public class MainActivity extends AppCompatActivity {
             if(msg.what == 1){
 
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED));
+
                 msgAdapter.notifyItemInserted(msgList.size()-1);
+
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
             }
             return false;
@@ -239,9 +305,9 @@ public class MainActivity extends AppCompatActivity {
     });
 
     //必須使用
-    private void runTranslation(Translate translate,String text,String targetLanguage){
+    private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage){
         new Thread(() -> {
-            Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
+            Translation translation = translate.translate(text, com.google.cloud.translate.Translate.TranslateOption.targetLanguage(targetLanguage));
             String translatedText = translation.getTranslatedText();
             System.out.println(translatedText);
             //outputText.setText(String.format("結果(%s): %s ",language.getOutputLanguage(),translatedText));
