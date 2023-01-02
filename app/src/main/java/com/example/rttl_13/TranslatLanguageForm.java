@@ -60,6 +60,7 @@ public class TranslatLanguageForm extends AppCompatActivity {
                 bundle.putInt("switchKey", languageswitchkey);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                finish();
                 /*-------------------------------------------------------------------------------------*/
             }
         });

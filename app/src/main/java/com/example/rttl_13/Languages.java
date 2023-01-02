@@ -22,6 +22,8 @@ class Languages{
         outputLanguage = language.toString();
         speechLanguage = language;
     }
+
+
     String getInputLanguage(){
         return inputLanguage;
     }

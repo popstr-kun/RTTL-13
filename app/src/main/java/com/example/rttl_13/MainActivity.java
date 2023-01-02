@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
 
     private List<Msg>     msgList = new ArrayList<>();
+    private List<Integer> languageList = new ArrayList<>();
     private RecyclerView  msgRecyclerView;
     private EditText      inputText;
 
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             if(!"".equals(content)) {
-                msgList.add(new Msg(content,Msg.TYPE_SEND));
+                msgList.add(new Msg(content,Msg.TYPE_SEND,language.getSpeechLanguage()));
 
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
@@ -278,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(int msg) {
                 textToSpeech = new TextToSpeech(MainActivity.this, i -> {
                     if(i != TextToSpeech.ERROR) {
-                        textToSpeech.setLanguage(language.getSpeechLanguage());
+                        textToSpeech.setLanguage(msgList.get(msg).getLocale());
                         Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
                         textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
                         System.out.println(msgList.get(msg).getString());
@@ -307,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 200){
             if(resultCode == RESULT_OK && data != null){
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                msgList.add(new Msg(result.get(0),Msg.TYPE_SEND));
+                msgList.add(new Msg(result.get(0),Msg.TYPE_SEND,language.getSpeechLanguage()));
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 runTranslation(translate,result.get(0),language.getOutputLanguage());
@@ -319,7 +320,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
-                msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED));
+                msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED,language.getSpeechLanguage()));
+
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
             }
@@ -350,7 +352,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Msg> getData(){
         List<Msg> list = new ArrayList<>();
-        list.add(new Msg("哈囉您好~歡迎使用即時翻譯系統\n本系統提供各國語音&語言翻譯。\n\n1.短按翻譯後語言可重新朗讀。\n2.常按翻譯後語言可複製。",Msg.TYPE_RECEIVED));
+        language.setOutputLanguage(languageis[0]);
+        list.add(new Msg("哈囉您好~歡迎使用即時翻譯系統\n本系統提供各國語音&語言翻譯。\n\n1.短按翻譯後語言可重新朗讀。\n2.長按翻譯後語言可複製。",Msg.TYPE_RECEIVED,language.getSpeechLanguage()));
         return list;
     }
 
