@@ -183,16 +183,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         imageSpeak.setOnClickListener(v ->  {
-                //Speech to Text
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language.getInputLanguage());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說～");
-                try{
-                    startActivityForResult(intent,200);
-                }catch (ActivityNotFoundException a){
-                    Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
-                }
+            //Speech to Text
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language.getInputLanguage());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說～");
+            try{
+                startActivityForResult(intent,200);
+            }catch (ActivityNotFoundException a){
+                Toast.makeText(getApplicationContext(),"Intent problem", Toast.LENGTH_SHORT).show();
+            }
         });
 
         btnMsgSend.setOnClickListener(v ->  {
@@ -223,8 +223,13 @@ public class MainActivity extends AppCompatActivity {
 
         imageSwap.setOnClickListener(v -> {
             language.ioLanguageSwap();
-            btnInput.setText(String.format("輸入\n%s",language.getInputLanguage()));
-            btnOutput.setText(String.format("輸出\n%s",language.getOutputLanguage()));
+            int i;
+            i=keyInput;
+            keyInput = keyOutput;
+            keyOutput = i;
+            btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
+            btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
+
         });
 
         msgRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -232,9 +237,9 @@ public class MainActivity extends AppCompatActivity {
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if(oldBottom > bottom){
                     msgRecyclerView.post(()->{
-                       if(msgAdapter.getItemCount() > 0 ){
-                           msgRecyclerView.scrollToPosition(msgAdapter.getItemCount() - 1);
-                       }
+                        if(msgAdapter.getItemCount() > 0 ){
+                            msgRecyclerView.scrollToPosition(msgAdapter.getItemCount() - 1);
+                        }
                     });
                 }
             }
