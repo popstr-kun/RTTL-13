@@ -84,7 +84,44 @@ public class MainActivity extends AppCompatActivity {
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(msgAdapter);
 
+        int LanguageStatus = 0;
+
+
         internetCheck();
+
+        /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
+        btnInput.setOnClickListener((View v)->{
+            int switchKey = 0;
+            Intent intent = new Intent(this,translate.class);
+            intent.putExtra("switchKey", switchKey); //可放所有基本類別
+            startActivity(intent);
+        });
+        /*-----------------------------------------------------------------*/
+
+        /*跳轉頁面(輸出按鈕)--------------------------------------------------*/
+        btnOutput.setOnClickListener((View v)->{
+            int switchKey = 1;
+            Intent intent = new Intent(this,translate.class);
+            intent.putExtra("switchKey", switchKey); //可放所有基本類別
+            startActivity(intent);
+        });
+        /*-----------------------------------------------------------------*/
+
+        /*接收回傳值---------------------------------------------------------*/
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null) {
+            int languageKeyintput = bundle.getInt("languageKey");
+            int switchKeyintput = bundle.getInt("switchKey");
+            /*回傳值--------------------------------------------------------------------
+            switchKeyintput：表示是輸入按鈕的參數(0) or 輸出按鈕的參數(1)
+            languageKeyintput：表示語言對應的編號
+            EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
+                輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
+            -------------------------------------------------------------------------*/
+            System.out.print("switchKeyintput：" + switchKeyintput + " , ");
+            System.out.println("languageKeyintput：" + languageKeyintput);
+        }
+        /*-----------------------------------------------------------------*/
 
         //Text to Speech
         textToSpeech = new TextToSpeech(MainActivity.this, i -> {
