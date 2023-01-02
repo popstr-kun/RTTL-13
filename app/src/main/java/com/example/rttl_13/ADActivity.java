@@ -94,13 +94,13 @@ public class ADActivity extends AppCompatActivity {
     }
 
 
-//    private void showRewardedVideo() {
-//
-//        if (rewardedInterstitialAd == null) {
-//            Log.d(TAG, "The rewarded interstitial ad wasn't ready yet.");
-//            return;
-//        }
-//
+    protected void showRewardedVideo(Context context) {
+
+        if (rewardedInterstitialAd == null) {
+            Log.d(TAG, "The rewarded interstitial ad wasn't ready yet.");
+            return;
+        }
+
 //        rewardedInterstitialAd.setFullScreenContentCallback(
 //                new FullScreenContentCallback() {
 //                    /** Called when ad showed the full screen content. */
@@ -140,15 +140,15 @@ public class ADActivity extends AppCompatActivity {
 //                        loadRewardedInterstitialAd();
 //                    }
 //                });
-//
-//
-//        rewardedInterstitialAd.show(
-//                ADActivity.this,
-//                rewardItem -> {
-//                    // Handle the reward.
-//                    Log.d(TAG, "The user earned the reward.");
-//
-//                });
-//    }
+
+
+        rewardedInterstitialAd.show(
+                ADActivity.this,
+                rewardItem -> {
+                    // Handle the reward.
+                    Log.d(TAG, "The user earned the reward.");
+
+                });
+    }
 
     }

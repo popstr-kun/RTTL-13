@@ -30,6 +30,8 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         TextView name;
         View avatar;
 
+        TextView rightText;
+
         public ViewHolder(View view){
             super(view);
             leftLayout = view.findViewById(R.id.left_layout);

@@ -2,9 +2,11 @@ package com.example.rttl_13;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,6 +50,7 @@ public class TranslatLanguageForm extends AppCompatActivity {
                 String msg = String.format("%d",position);
                 setToast(translateActivity.this, msg);
                 -------------------------------------------------------------------------------------*/
+                runVibrate(50);
                 Intent intent = new Intent();
                 intent.setClass(TranslatLanguageForm.this, MainActivity.class);
                 Bundle bundle = new Bundle();
@@ -70,5 +73,11 @@ public class TranslatLanguageForm extends AppCompatActivity {
 
     private void findViews() {
         listView = (ListView) findViewById(R.id.listView);
+    }
+
+    private void runVibrate(int vibratorTime){
+        Vibrator myVibrator = (Vibrator) getApplication()//取得震動
+                .getSystemService(Service.VIBRATOR_SERVICE);
+        myVibrator.vibrate(vibratorTime);
     }
 }

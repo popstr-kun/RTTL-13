@@ -4,7 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -14,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -134,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
         btnInput.setOnClickListener((View v)->{
+            runVibrate(50);
             int switchKey = 0;
 
             Intent intent = new Intent(this, TranslatLanguageForm.class);
@@ -144,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
         /*跳轉頁面(輸出按鈕)--------------------------------------------------*/
         btnOutput.setOnClickListener((View v)->{
+            runVibrate(50);
             int switchKey = 1;
             Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
@@ -190,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
         btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
 
-
         imageSpeak.setOnClickListener(v ->  {
+            runVibrate(50);
             //Speech to Text
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -205,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnMsgSend.setOnClickListener(v ->  {
+            runVibrate(50);
             String content = inputText.getText().toString();
 
             //Text to Speech
@@ -230,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         imageSwap.setOnClickListener(v -> {
+            runVibrate(50);
             language.ioLanguageSwap();
             //Text to Speech
             textToSpeech = new TextToSpeech(MainActivity.this, i -> {
@@ -265,10 +274,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         msgAdapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
-
             @Override
             public void onItemClick(int msg) {
-
                 textToSpeech = new TextToSpeech(MainActivity.this, i -> {
                     if(i != TextToSpeech.ERROR) {
                         textToSpeech.setLanguage(language.getSpeechLanguage());
@@ -282,11 +289,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-
             }
             @Override
             public void onItemLongClick(int msg) {
+                runVibrate(50);
 
+                ClipboardManager clipboardManager = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText(null,msgList.get(msg).getString()));
+                Toast.makeText(getApplicationContext(), "已複製被翻譯文字", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -340,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Msg> getData(){
         List<Msg> list = new ArrayList<>();
-        list.add(new Msg("哈囉您好~歡迎使用即時翻譯系統\n\n本系統提供各國語音&語言翻譯",Msg.TYPE_RECEIVED));
+        list.add(new Msg("哈囉您好~歡迎使用即時翻譯系統\n本系統提供各國語音&語言翻譯。\n\n1.短按翻譯後語言可重新朗讀。\n2.常按翻譯後語言可複製。",Msg.TYPE_RECEIVED));
         return list;
     }
 
@@ -353,6 +363,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"無網路連接，請連接後重試", Toast.LENGTH_SHORT).show();
             return;
         }
+    }
+
+    private void runVibrate(int vibratorTime){
+        Vibrator myVibrator = (Vibrator) getApplication()//取得震動
+                .getSystemService(Service.VIBRATOR_SERVICE);
+        myVibrator.vibrate(vibratorTime);
     }
 
 
