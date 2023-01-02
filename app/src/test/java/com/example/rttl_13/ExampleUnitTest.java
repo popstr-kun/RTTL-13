@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:app/src/test/java/com/example/switchlanguage/ExampleUnitTest.java
-package com.example.switchlanguage;
-========
 package com.example.rttl_13;
->>>>>>>> df334a9 (合併文件):app/src/test/java/com/example/rttl_13/ExampleUnitTest.java
 
 import org.junit.Test;
 
