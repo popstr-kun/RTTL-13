@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -30,6 +31,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
@@ -229,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnMsgSend.setOnClickListener(v ->  {
-            adActivity.showRewardedVideo(getApplicationContext(),MainActivity.this);
             runVibrate(50);
             String content = inputText.getText().toString();
 
@@ -251,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 //清空输入框中的内容
                 inputText.setText("");
-                runTranslation(translate,content,language.getOutputLanguage());
+                runTranslation(translate,content,language.getOutputLanguage(),adActivity);
             }
         });
 
@@ -348,9 +350,10 @@ public class MainActivity extends AppCompatActivity {
     });
 
     //必須使用
-    private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage){
+
+    private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage) {
         new Thread(() -> {
-            Translation translation = translate.translate(text, com.google.cloud.translate.Translate.TranslateOption.targetLanguage(targetLanguage));
+            Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
             String translatedText = translation.getTranslatedText();
             System.out.println(translatedText);
             try {
@@ -366,6 +369,55 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }).start();
+
+    }
+
+    private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage , ADActivity adActivity){
+
+        adActivity.showRewardedVideo(getApplicationContext(),MainActivity.this);
+        adActivity.rewardedInterstitialAd.setFullScreenContentCallback(
+            new FullScreenContentCallback() {
+                @Override
+                public void onAdClicked() {
+                    super.onAdClicked();
+                }
+
+                @Override
+                public void onAdDismissedFullScreenContent(){//當廣告影片關閉
+                    adActivity.rewardedInterstitialAd = null;
+                    new Thread(() -> {
+                        Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
+                        String translatedText = translation.getTranslatedText();
+                        System.out.println(translatedText);
+
+
+                        try {
+                            Thread.sleep(100);
+
+                            if(translatedText != null){
+                                translateTextGlobal = translatedText;
+                                textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
+                                Message msg = new Message();
+                                msg.what = 1;
+                                handler.sendMessage(msg);
+                            }
+
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+
+                    adActivity.loadRewardedInterstitialAd(MainActivity.this);
+                }
+                @Override
+                public void onAdShowedFullScreenContent() {//當廣告影片開始
+
+                }
+            }
+        );
+
+
     }
 
     private List<Msg> getData(){

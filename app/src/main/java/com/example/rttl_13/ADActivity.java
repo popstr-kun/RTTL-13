@@ -31,7 +31,7 @@ public class ADActivity extends AppCompatActivity {
 
     //private Button retryButton;
 
-    private RewardedInterstitialAd rewardedInterstitialAd;
+    protected RewardedInterstitialAd rewardedInterstitialAd;
     boolean isLoadingAds;
 
 //        @Override
@@ -136,9 +136,9 @@ public class ADActivity extends AppCompatActivity {
                         // Don't forget to set the ad reference to null so you
                         // don't show the ad a second time.
                         rewardedInterstitialAd = null;
-                        Log.d(TAG, "onAdDismissedFullScreenContent");
-                        Toast.makeText(context, "onAdDismissedFullScreenContent", Toast.LENGTH_SHORT)
-                                .show();
+                        //Log.d(TAG, "onAdDismissedFullScreenContent");
+                        //Toast.makeText(context, "onAdDismissedFullScreenContent", Toast.LENGTH_SHORT)
+                               // .show();
                         // Preload the next rewarded interstitial ad.
                         loadRewardedInterstitialAd(context);
                     }
@@ -154,4 +154,8 @@ public class ADActivity extends AppCompatActivity {
                 });
     }
 
+
+
     }
+
+

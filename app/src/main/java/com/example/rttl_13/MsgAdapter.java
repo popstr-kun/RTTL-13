@@ -35,12 +35,12 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         public ViewHolder(View view){
             super(view);
             leftLayout = view.findViewById(R.id.left_layout);
-            left_msg = view.findViewById(R.id.left_msg);
+            left_msg   = view.findViewById(R.id.left_msg);
 
             rightLayout = view.findViewById(R.id.right_layout);
-            right_msg = view.findViewById(R.id.right_msg);
+            right_msg   = view.findViewById(R.id.right_msg);
 
-            name = view.findViewById(R.id.name);
+            name   = view.findViewById(R.id.name);
             avatar = view.findViewById(R.id.avatar);
 
             topLayout = view.findViewById(R.id.topLinear);
