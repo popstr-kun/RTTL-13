@@ -25,7 +25,7 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoa
 public class ADActivity extends AppCompatActivity {
     //private AdView adView;
 
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5354046379";
+    private static final String AD_UNIT_ID = "ca-app-pub-9243343214101739/7625542297";
     private static final String TAG = "ADActivity";
 
 

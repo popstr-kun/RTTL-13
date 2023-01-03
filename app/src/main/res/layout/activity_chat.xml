@@ -12,15 +12,15 @@
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adBanner"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
 
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        ads:adSize="FULL_BANNER"
+        ads:adUnitId="ca-app-pub-9243343214101739/3198206539"
         ads:layout_constraintTop_toTopOf="parent"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintHorizontal_bias="1.0"

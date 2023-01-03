@@ -44,11 +44,6 @@ import java.util.Locale;
  * @author SHEN_KUN
  */
 public class MainActivity extends AppCompatActivity {
-
-    Locale[] availableLocales = Locale.getAvailableLocales();
-
-
-
     /*語言列表---------------------------------------------------------------------------------*/
     private String[] countryName = new String[]{
             "台灣",
@@ -77,21 +72,16 @@ public class MainActivity extends AppCompatActivity {
             Locale.CANADA_FRENCH
     };
     /*---------------------------------------------------------------------------------------*/
-
-    private static int keyInput = 0,keyOutput =8;
-
-    private TextToSpeech textToSpeech;
-    private String translateTextGlobal;
-
-    Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
-
+    private static int    keyInput = 0,keyOutput =8;
+    private TextToSpeech  textToSpeech;
+    private String        translateTextGlobal;
     private List<Msg>     msgList = new ArrayList<>();
-
     private RecyclerView  msgRecyclerView;
     private EditText      inputText;
-
     private MsgAdapter    msgAdapter;
 
+    //Locale[] availableLocales = Locale.getAvailableLocales();
+    Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
 
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
     com.google.cloud.translate.Translate translate = options.getService();
@@ -122,25 +112,18 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setTitle("即時翻譯系統");
 
-        for (Locale locale : availableLocales) {
-            String language = locale.getLanguage();
-            String country = locale.getCountry();
-            // 根據你的需要創建所需的語言環境的 Locale 對象
-            System.out.println(language);
-            System.out.println(country);
-        }
+//        for (Locale locale : availableLocales) {
+//            String language = locale.getLanguage();
+//            String country = locale.getCountry();
+//            // 根據你的需要創建所需的語言環境的 Locale 對象
+//            System.out.println(language);
+//            System.out.println(country);
+//        }
 
+        ADActivity adActivity= new ADActivity(getApplicationContext());
+        AdRequest adRequest  = new AdRequest.Builder().build();
 
-        ADActivity adActivity = new ADActivity(getApplicationContext());
-
-        AdView adView = findViewById(R.id.adBanner);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-
-
-        adActivity.loadRewardedInterstitialAd(getApplicationContext());
-
-
+        AdView adView        = findViewById(R.id.adBanner);
         ImageView imageSpeak = findViewById(R.id.image_speak);
         Button btnInput      = findViewById(R.id.btn_input);
         Button btnOutput     = findViewById(R.id.btn_output);
@@ -150,8 +133,10 @@ public class MainActivity extends AppCompatActivity {
         Button btnMsgSend    = findViewById(R.id.send);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-        msgAdapter           = new MsgAdapter(msgList = getData());
+        adView.loadAd(adRequest);
+        adActivity.loadRewardedInterstitialAd(getApplicationContext());
 
+        msgAdapter = new MsgAdapter(msgList = getData());
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(msgAdapter);
 
@@ -181,24 +166,24 @@ public class MainActivity extends AppCompatActivity {
         /*接收回傳值---------------------------------------------------------*/
         Bundle bundleKey = this.getIntent().getExtras();
         if (bundleKey != null) {
-            int languageKeyintput = bundleKey.getInt("languageKey");
-            int switchKeyintput = bundleKey.getInt("switchKey");
+            int languageKeyIntput = bundleKey.getInt("languageKey");
+            int switchKeyIntput = bundleKey.getInt("switchKey");
             /*回傳值--------------------------------------------------------------------
             switchKeyintput：表示是輸入按鈕的參數(0) or 輸出按鈕的參數(1)
             languageKeyintput：表示語言對應的編號
             EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
                 輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
             -------------------------------------------------------------------------*/
-            if(switchKeyintput == 0){
-                keyInput = languageKeyintput;
+            if(switchKeyIntput == 0){
+                keyInput = languageKeyIntput;
                 language.setInputLanguage(languageis[keyInput]);
-            }else if(switchKeyintput == 1){
-                keyOutput = languageKeyintput;
+            }else if(switchKeyIntput == 1){
+                keyOutput = languageKeyIntput;
                 language.setOutputLanguage(languageis[keyOutput]);
             }
 
-            System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyintput);
-            System.out.println("languageKeyintput：" + languageKeyintput + ", 語言："+ countryName[languageKeyintput] + ", 國家：" + countryName[languageKeyintput]);
+            System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyIntput);
+            System.out.println("languageKeyintput：" + languageKeyIntput + ", 語言："+ countryName[languageKeyIntput] + ", 國家：" + countryName[languageKeyIntput]);
         }
         /*-----------------------------------------------------------------*/
 
@@ -223,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language.getInputLanguage());
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說～");
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, String.format("請說~(%s)",countryName[keyInput]));
             try{
                 startActivityForResult(intent,200);
             }catch (ActivityNotFoundException a){
@@ -235,18 +220,19 @@ public class MainActivity extends AppCompatActivity {
             runVibrate(50);
             String content = inputText.getText().toString();
 
-            //Text to Speech
-            textToSpeech = new TextToSpeech(MainActivity.this, i -> {
-                if(i != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(language.getSpeechLanguage());
-                }
-                else {
-                    Log.e("error","Text to Speech 初始化失敗");
-                    Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
-                }
-            });
-
             if(!"".equals(content)) {
+
+                //Text to Speech
+                textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+                    if(i != TextToSpeech.ERROR) {
+                        textToSpeech.setLanguage(language.getSpeechLanguage());
+                    }
+                    else {
+                        Log.e("error","Text to Speech 初始化失敗");
+                        Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 msgList.add(new Msg(content,Msg.TYPE_SEND,language.getSpeechLanguage()));
 
                 msgAdapter.notifyItemInserted(msgList.size()-1);
@@ -299,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                 textToSpeech = new TextToSpeech(MainActivity.this, i -> {
                     if(i != TextToSpeech.ERROR) {
                         textToSpeech.setLanguage(msgList.get(msg).getLocale());
-                        Toast.makeText(getApplicationContext(), "重新朗讀", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "重新朗讀翻譯內容", Toast.LENGTH_SHORT).show();
                         textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
                         System.out.println(msgList.get(msg).getString());
                     }
@@ -352,29 +338,19 @@ public class MainActivity extends AppCompatActivity {
     //必須使用
 
     private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage) {
-        new Thread(() -> {
-            Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
-            String translatedText = translation.getTranslatedText();
-            System.out.println(translatedText);
-            try {
-                Thread.sleep(100);
-                if(translatedText != null){
-                    translateTextGlobal = translatedText;
-                    textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
-                    Message msg = new Message();
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
+        runThread(text,targetLanguage);
     }
 
     private void runTranslation(com.google.cloud.translate.Translate translate, String text, String targetLanguage , ADActivity adActivity){
+        Boolean []random = new Boolean[]{true,false};
 
-        adActivity.showRewardedVideo(getApplicationContext(),MainActivity.this);
+        if(random[(int) (Math.random() * 2)]){
+            adActivity.showRewardedVideo(getApplicationContext(),MainActivity.this);
+        }
+        else {
+            runThread(text,targetLanguage);
+        }
+
         adActivity.rewardedInterstitialAd.setFullScreenContentCallback(
             new FullScreenContentCallback() {
                 @Override
@@ -385,29 +361,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onAdDismissedFullScreenContent(){//當廣告影片關閉
                     adActivity.rewardedInterstitialAd = null;
-                    new Thread(() -> {
-                        Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
-                        String translatedText = translation.getTranslatedText();
-                        System.out.println(translatedText);
-
-
-                        try {
-                            Thread.sleep(100);
-
-                            if(translatedText != null){
-                                translateTextGlobal = translatedText;
-                                textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
-                                Message msg = new Message();
-                                msg.what = 1;
-                                handler.sendMessage(msg);
-                            }
-
-
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-
+                    runThread(text,targetLanguage);
                     adActivity.loadRewardedInterstitialAd(MainActivity.this);
                 }
                 @Override
@@ -416,8 +370,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         );
+    }
 
+    private void runThread(String text,String targetLanguage){
+        new Thread(() -> {
+            Translation translation = translate.translate(text, Translate.TranslateOption.targetLanguage(targetLanguage));
+            String translatedText = translation.getTranslatedText();
+            System.out.println(translatedText);
 
+            try {
+                Thread.sleep(100);
+
+                if(translatedText != null){
+                    translateTextGlobal = translatedText;
+                    textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
+                    Message msg = new Message();
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private List<Msg> getData(){
