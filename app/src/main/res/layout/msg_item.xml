@@ -18,10 +18,12 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/circle"
+
             android:scaleType="centerInside" />
 
         <TextView
             android:id="@+id/name"
+            android:textColor="#1b1e1f"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -46,6 +48,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:text="Placeholder message"
+            android:textSize="17dp"
 
             android:textColor="@color/white" />
 
@@ -67,6 +70,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:textColor="#fff"
+            android:textSize="17dp"
             android:text="Placeholder message"
             />
 

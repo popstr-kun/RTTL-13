@@ -199,8 +199,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
-        btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
+        btnInput.setText(countryName[keyInput]);
+        btnOutput.setText(countryName[keyOutput]);
 
         imageSpeak.setOnClickListener(v ->  {
             runVibrate(50);
@@ -260,8 +260,8 @@ public class MainActivity extends AppCompatActivity {
             i=keyInput;
             keyInput = keyOutput;
             keyOutput = i;
-            btnInput.setText(String.format("輸入\n%s",countryName[keyInput]));
-            btnOutput.setText(String.format("輸出\n%s",countryName[keyOutput]));
+            btnInput.setText(countryName[keyInput]);
+            btnOutput.setText(countryName[keyOutput]);
 
         });
 
