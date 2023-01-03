@@ -42,6 +42,10 @@ import java.util.Locale;
  */
 public class MainActivity extends AppCompatActivity {
 
+    Locale[] availableLocales = Locale.getAvailableLocales();
+
+
+
     /*語言列表---------------------------------------------------------------------------------*/
     private String[] countryName = new String[]{
             "台灣",
@@ -115,10 +119,22 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setTitle("即時翻譯系統");
 
+        for (Locale locale : availableLocales) {
+            String language = locale.getLanguage();
+            String country = locale.getCountry();
+            // 根據你的需要創建所需的語言環境的 Locale 對象
+            System.out.println(language);
+            System.out.println(country);
+        }
+
+
         ADActivity adActivity = new ADActivity(getApplicationContext());
+
         AdView adView = findViewById(R.id.adBanner);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
+
         adActivity.loadRewardedInterstitialAd(getApplicationContext());
 
 
@@ -213,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnMsgSend.setOnClickListener(v ->  {
+            adActivity.showRewardedVideo(getApplicationContext(),MainActivity.this);
             runVibrate(50);
             String content = inputText.getText().toString();
 
@@ -320,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
+
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED,language.getSpeechLanguage()));
                 msgList.get(msgList.size()-1).setName("即時翻譯輸出"+"("+countryName[keyOutput]+")");
                 msgAdapter.notifyItemInserted(msgList.size()-1);

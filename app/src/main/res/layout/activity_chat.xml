@@ -8,6 +8,8 @@
     android:padding="10dp"
     android:background="#d6d6d6">
 
+
+
     <com.google.android.gms.ads.AdView
         android:id="@+id/adBanner"
         android:layout_width="wrap_content"

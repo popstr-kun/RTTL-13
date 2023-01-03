@@ -1,6 +1,7 @@
 package com.example.rttl_13;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -10,8 +11,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
@@ -20,13 +23,13 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoa
 
 
 public class ADActivity extends AppCompatActivity {
-    private AdView adView;
+    //private AdView adView;
 
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5354046379";
     private static final String TAG = "ADActivity";
 
 
-    private Button retryButton;
+    //private Button retryButton;
 
     private RewardedInterstitialAd rewardedInterstitialAd;
     boolean isLoadingAds;
@@ -94,56 +97,56 @@ public class ADActivity extends AppCompatActivity {
     }
 
 
-    protected void showRewardedVideo(Context context) {
+    protected void showRewardedVideo(Context context, Activity activity) {
 
         if (rewardedInterstitialAd == null) {
             Log.d(TAG, "The rewarded interstitial ad wasn't ready yet.");
             return;
         }
 
-//        rewardedInterstitialAd.setFullScreenContentCallback(
-//                new FullScreenContentCallback() {
-//                    /** Called when ad showed the full screen content. */
-//                    @Override
-//                    public void onAdShowedFullScreenContent() {//當廣告影片開始
-//                        Log.d(TAG, "onAdShowedFullScreenContent");
-//
-//                        Toast.makeText(ADActivity.this, "onAdShowedFullScreenContent", Toast.LENGTH_SHORT)
-//                                .show();
-//                    }
-//
-//                    /** Called when the ad failed to show full screen content. */
-//                    @Override
-//                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-//                        Log.d(TAG, "onAdFailedToShowFullScreenContent: " + adError.getMessage());
-//
-//                        // Don't forget to set the ad reference to null so you
-//                        // don't show the ad a second time.
-//                        rewardedInterstitialAd = null;
-//                        loadRewardedInterstitialAd();
-//
-//                        Toast.makeText(
-//                                        ADActivity.this, "onAdFailedToShowFullScreenContent", Toast.LENGTH_SHORT)
-//                                .show();
-//                    }
-//
-//                    /** Called when full screen content is dismissed. */
-//                    @Override
-//                    public void onAdDismissedFullScreenContent() {//當廣告影片關閉
-//                        // Don't forget to set the ad reference to null so you
-//                        // don't show the ad a second time.
-//                        rewardedInterstitialAd = null;
-//                        Log.d(TAG, "onAdDismissedFullScreenContent");
-//                        Toast.makeText(ADActivity.this, "onAdDismissedFullScreenContent", Toast.LENGTH_SHORT)
-//                                .show();
-//                        // Preload the next rewarded interstitial ad.
-//                        loadRewardedInterstitialAd();
-//                    }
-//                });
+        rewardedInterstitialAd.setFullScreenContentCallback(
+                new FullScreenContentCallback() {
+                    /** Called when ad showed the full screen content. */
+                    @Override
+                    public void onAdShowedFullScreenContent() {//當廣告影片開始
+                        Log.d(TAG, "onAdShowedFullScreenContent");
+
+                        Toast.makeText(context, "onAdShowedFullScreenContent", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    /** Called when the ad failed to show full screen content. */
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        Log.d(TAG, "onAdFailedToShowFullScreenContent: " + adError.getMessage());
+
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        rewardedInterstitialAd = null;
+                        loadRewardedInterstitialAd(context);
+
+                        Toast.makeText(
+                                        context, "onAdFailedToShowFullScreenContent", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    /** Called when full screen content is dismissed. */
+                    @Override
+                    public void onAdDismissedFullScreenContent() {//當廣告影片關閉
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        rewardedInterstitialAd = null;
+                        Log.d(TAG, "onAdDismissedFullScreenContent");
+                        Toast.makeText(context, "onAdDismissedFullScreenContent", Toast.LENGTH_SHORT)
+                                .show();
+                        // Preload the next rewarded interstitial ad.
+                        loadRewardedInterstitialAd(context);
+                    }
+                });
 
 
         rewardedInterstitialAd.show(
-                ADActivity.this,
+                activity,
                 rewardItem -> {
                     // Handle the reward.
                     Log.d(TAG, "The user earned the reward.");
