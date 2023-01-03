@@ -8,6 +8,7 @@ public class Msg {
     private String content;
     private int type;
     private Locale language;
+    private String name = "即時翻譯輸出";
 
     Msg(String content, int type ){
         this.content = content;
@@ -29,4 +30,12 @@ public class Msg {
     }
     public String getString(){return content;}
     public Locale getLocale(){return language;}
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
 }

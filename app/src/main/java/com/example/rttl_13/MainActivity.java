@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
 
     private List<Msg>     msgList = new ArrayList<>();
-    private List<Integer> languageList = new ArrayList<>();
+
     private RecyclerView  msgRecyclerView;
     private EditText      inputText;
 
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED,language.getSpeechLanguage()));
-
+                msgList.get(msgList.size()-1).setName("即時翻譯輸出"+"("+countryName[keyOutput]+")");
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
             }
