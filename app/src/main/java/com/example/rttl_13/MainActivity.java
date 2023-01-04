@@ -153,8 +153,9 @@ public class MainActivity extends AppCompatActivity {
             int switchKey = 0;
 
             Intent intent = new Intent(this, TranslatLanguageForm.class);
-            intent.putExtra("switchKey", switchKey); //可放所有基本類別
+            intent.putExtra("switchKey", switchKey); //可放所有基本類
             startActivity(intent);
+            finish();
         });
         /*-----------------------------------------------------------------*/
 
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
+            finish();
         });
         /*-----------------------------------------------------------------*/
 
