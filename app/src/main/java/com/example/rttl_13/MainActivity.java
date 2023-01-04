@@ -195,17 +195,6 @@ public class MainActivity extends AppCompatActivity {
         /*-----------------------------------------------------------------*/
 
 
-        //Text to Speech
-        textToSpeech = new TextToSpeech(MainActivity.this, i -> {
-            if(i != TextToSpeech.ERROR) {
-                textToSpeech.setLanguage(language.getSpeechLanguage());
-            }
-            else {
-                Log.e("error","Text to Speech 初始化失敗");
-                Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
-            }
-        });
-
         btnInput.setText(countryName[keyInput]);
         btnOutput.setText(countryName[keyOutput]);
 
