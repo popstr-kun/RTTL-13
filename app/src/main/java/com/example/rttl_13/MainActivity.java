@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             Locale.CANADA_FRENCH
     };
     /*---------------------------------------------------------------------------------------*/
-    private static int    keyInput = 0,keyOutput =8;
+    static private int    keyInput = 0,keyOutput =8;
     private TextToSpeech  textToSpeech;
     private String        translateTextGlobal;
     private List<Msg>     msgList = new ArrayList<>();
@@ -114,14 +114,6 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setTitle("即時翻譯系統");
 
-//        for (Locale locale : availableLocales) {
-//            String language = locale.getLanguage();
-//            String country = locale.getCountry();
-//            // 根據你的需要創建所需的語言環境的 Locale 對象
-//            System.out.println(language);
-//            System.out.println(country);
-//        }
-
         ADActivity adActivity= new ADActivity(getApplicationContext());
         AdRequest adRequest  = new AdRequest.Builder().build();
 
@@ -135,15 +127,14 @@ public class MainActivity extends AppCompatActivity {
         Button btnMsgSend    = findViewById(R.id.send);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
+
+
         adView.loadAd(adRequest);
         adActivity.loadRewardedInterstitialAd(getApplicationContext());
 
         msgAdapter = new MsgAdapter(msgList = getData());
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(msgAdapter);
-
-        btnInput.setText(countryName[keyInput]);
-        btnOutput.setText(countryName[keyOutput]);
 
         internetCheck();
 
@@ -267,6 +258,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "已複製被翻譯文字", Toast.LENGTH_LONG).show();
             }
         });
+
+        btnInput.setText(countryName[keyInput]);
+        btnOutput.setText(countryName[keyOutput]);
     }
 
     @Override
