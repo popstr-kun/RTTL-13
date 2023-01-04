@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +30,12 @@ public class TranslatLanguageForm extends AppCompatActivity {
             "加拿大-英文",
             "加拿大-法文"
     };
+
+    @Override
+    public void finish() {
+        super.finish();
+        Log.e("finish","activity finish");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +67,16 @@ public class TranslatLanguageForm extends AppCompatActivity {
                 bundle.putInt("languageKey", position); //可放所有基本類別
                 bundle.putInt("switchKey", languageswitchkey);
                 intent.putExtras(bundle);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 finish();
                 /*-------------------------------------------------------------------------------------*/
             }
         });
     }
+
+
+
     public void setToast(Context context, String text) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }

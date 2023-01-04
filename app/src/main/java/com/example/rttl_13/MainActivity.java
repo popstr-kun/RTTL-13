@@ -23,6 +23,8 @@ import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             Locale.CANADA_FRENCH
     };
     /*---------------------------------------------------------------------------------------*/
-    private static int    keyInput = 0,keyOutput =8;
+    static private  int   keyInput = 0,keyOutput =8;
     private TextToSpeech  textToSpeech;
     private String        translateTextGlobal;
     private List<Msg>     msgList = new ArrayList<>();
@@ -104,9 +106,12 @@ public class MainActivity extends AppCompatActivity {
         textToSpeech.shutdown();
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("create","activity create");
         setContentView(R.layout.activity_chat);
         //设置竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -305,7 +310,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "已複製被翻譯文字", Toast.LENGTH_LONG).show();
             }
         });
+
+
     }
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
