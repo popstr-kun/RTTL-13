@@ -67,7 +67,7 @@ public class TranslatLanguageForm extends AppCompatActivity {
                 bundle.putInt("languageKey", position); //可放所有基本類別
                 bundle.putInt("switchKey", languageswitchkey);
                 intent.putExtras(bundle);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
                 startActivity(intent);
                 finish();
                 /*-------------------------------------------------------------------------------------*/

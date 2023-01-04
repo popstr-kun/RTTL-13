@@ -37,7 +37,7 @@ import com.google.cloud.translate.Translation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 /**
  * @author SHEN_KUN
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             Locale.CANADA_FRENCH
     };
     /*---------------------------------------------------------------------------------------*/
-    static private  int   keyInput = 0,keyOutput =8;
+    private static int    keyInput = 0,keyOutput =8;
     private TextToSpeech  textToSpeech;
     private String        translateTextGlobal;
     private List<Msg>     msgList = new ArrayList<>();
@@ -98,9 +98,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         // 不管是否正在朗读TTS都被打断
-        textToSpeech.stop();
-        // 关闭，释放资源
-        textToSpeech.shutdown();
+        if(textToSpeech != null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
+        }
     }
 
     @Override
