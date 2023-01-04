@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -23,8 +22,6 @@ import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,13 +31,13 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author SHEN_KUN
@@ -106,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
         textToSpeech.shutdown();
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(msgAdapter);
 
+        btnInput.setText(countryName[keyInput]);
+        btnOutput.setText(countryName[keyOutput]);
+
         internetCheck();
 
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
@@ -176,10 +174,10 @@ public class MainActivity extends AppCompatActivity {
             int languageKeyIntput = bundleKey.getInt("languageKey");
             int switchKeyIntput = bundleKey.getInt("switchKey");
             /*回傳值--------------------------------------------------------------------
-            switchKeyintput：表示是輸入按鈕的參數(0) or 輸出按鈕的參數(1)
-            languageKeyintput：表示語言對應的編號
-            EX: 輸入按鈕按下且選擇德文   ->    switchKeyintput==0 、 languageKeyintput==3
-                輸出按鈕按下且選擇日文   ->    switchKeyintput==1 、 languageKeyintput==6
+            switchKeyIntput：表示是輸入按鈕的參數(0) or 輸出按鈕的參數(1)
+            languageKeyIntput：表示語言對應的編號
+            EX: 輸入按鈕按下且選擇德文   ->    switchKeyIntput==0 、 languageKeyIntput==3
+                輸出按鈕按下且選擇日文   ->    switchKeyIntput==1 、 languageKeyIntput==6
             -------------------------------------------------------------------------*/
             if(switchKeyIntput == 0){
                 keyInput = languageKeyIntput;
@@ -193,10 +191,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("languageKeyintput：" + languageKeyIntput + ", 語言："+ countryName[languageKeyIntput] + ", 國家：" + countryName[languageKeyIntput]);
         }
         /*-----------------------------------------------------------------*/
-
-
-        btnInput.setText(countryName[keyInput]);
-        btnOutput.setText(countryName[keyOutput]);
 
         imageSpeak.setOnClickListener(v ->  {
             runVibrate(50);
@@ -217,20 +211,9 @@ public class MainActivity extends AppCompatActivity {
             String content = inputText.getText().toString();
 
             if(!"".equals(content)) {
-
                 //Text to Speech
-                textToSpeech = new TextToSpeech(MainActivity.this, i -> {
-                    if(i != TextToSpeech.ERROR) {
-                        textToSpeech.setLanguage(language.getSpeechLanguage());
-                    }
-                    else {
-                        Log.e("error","Text to Speech 初始化失敗");
-                        Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                setTextToSpeech(language.getSpeechLanguage());
                 msgList.add(new Msg(content,Msg.TYPE_SEND,language.getSpeechLanguage()));
-
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 //清空输入框中的内容
@@ -243,15 +226,8 @@ public class MainActivity extends AppCompatActivity {
             runVibrate(50);
             language.ioLanguageSwap();
             //Text to Speech
-            textToSpeech = new TextToSpeech(MainActivity.this, i -> {
-                if(i != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(language.getSpeechLanguage());
-                }
-                else {
-                    Log.e("error","Text to Speech 初始化失敗");
-                    Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
-                }
-            });
+            setTextToSpeech(language.getSpeechLanguage());
+
             int i;
             i=keyInput;
             keyInput = keyOutput;
@@ -278,35 +254,18 @@ public class MainActivity extends AppCompatActivity {
         msgAdapter.setOnItemClickListener(new MsgAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int msg) {
-                textToSpeech = new TextToSpeech(MainActivity.this, i -> {
-                    if(i != TextToSpeech.ERROR) {
-                        textToSpeech.setLanguage(msgList.get(msg).getLocale());
-                        Toast.makeText(getApplicationContext(), "重新朗讀翻譯內容", Toast.LENGTH_SHORT).show();
-                        textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
-                        System.out.println(msgList.get(msg).getString());
-                    }
-                    else {
-                        Log.e("error","Text to Speech 初始化失敗");
-                        Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                closeTextToSpeech(textToSpeech);
+                setTextToSpeech(msgList.get(msg).getLocale(),msg);
             }
             @Override
             public void onItemLongClick(int msg) {
                 runVibrate(50);
-
                 ClipboardManager clipboardManager = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboardManager.setPrimaryClip(ClipData.newPlainText(null,msgList.get(msg).getString()));
                 Toast.makeText(getApplicationContext(), "已複製被翻譯文字", Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
-
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -318,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 msgAdapter.notifyItemInserted(msgList.size()-1);
                 msgRecyclerView.scrollToPosition(msgList.size()-1);
                 runTranslation(translate,result.get(0),language.getOutputLanguage());
+                setTextToSpeech(language.getSpeechLanguage());
             }
         }
     }
@@ -326,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if(msg.what == 1){
-
                 msgList.add(new Msg(String.format("%s",translateTextGlobal),Msg.TYPE_RECEIVED,language.getSpeechLanguage()));
                 msgList.get(msgList.size()-1).setName("即時翻譯輸出"+"("+countryName[keyOutput]+")");
                 msgAdapter.notifyItemInserted(msgList.size()-1);
@@ -379,19 +338,12 @@ public class MainActivity extends AppCompatActivity {
             String translatedText = translation.getTranslatedText();
             System.out.println(translatedText);
 
-            try {
-                Thread.sleep(100);
-
-                if(translatedText != null){
-                    translateTextGlobal = translatedText;
-                    textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
-                    Message msg = new Message();
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                }
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(translatedText != null){
+                translateTextGlobal = translatedText;
+                textToSpeech.speak(translatedText,TextToSpeech.QUEUE_FLUSH,null);
+                Message msg = new Message();
+                msg.what = 1;
+                handler.sendMessage(msg);
             }
         }).start();
     }
@@ -419,6 +371,40 @@ public class MainActivity extends AppCompatActivity {
         Vibrator myVibrator = (Vibrator) getApplication()//取得震動
                 .getSystemService(Service.VIBRATOR_SERVICE);
         myVibrator.vibrate(vibratorTime);
+    }
+
+    private void setTextToSpeech(Locale setSpeechLanguage){
+        textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+            if(i != TextToSpeech.ERROR) {
+                textToSpeech.setLanguage(setSpeechLanguage);
+            }
+            else {
+                Log.e("error","Text to Speech 初始化失敗");
+                Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setTextToSpeech(Locale setSpeechLanguage,int msg){
+        textToSpeech = new TextToSpeech(MainActivity.this, i -> {
+            if(i != TextToSpeech.ERROR) {
+                textToSpeech.setLanguage(setSpeechLanguage);
+                Toast.makeText(getApplicationContext(), "重新朗讀翻譯內容", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak(msgList.get(msg).getString(),TextToSpeech.QUEUE_FLUSH,null);
+                System.out.println(msgList.get(msg).getString());
+            }
+            else {
+                Log.e("error","Text to Speech 初始化失敗");
+                Toast.makeText(getApplicationContext(),"Text to Speech 初始化失敗",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void closeTextToSpeech(TextToSpeech textToSpeech){
+        if(textToSpeech != null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
     }
 
 
