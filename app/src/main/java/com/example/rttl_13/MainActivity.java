@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             btnInput.setText(countryName[keyInput]);
             btnOutput.setText(countryName[keyOutput]);
 
-            setTextToSpeech(language.getSpeechLanguage());
+
         });
 
         msgRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -277,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 200){
             if(resultCode == RESULT_OK && data != null){
+                setTextToSpeech(language.getSpeechLanguage());
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 msgList.add(new Msg(result.get(0),Msg.TYPE_SEND,language.getSpeechLanguage()));
                 msgAdapter.notifyItemInserted(msgList.size()-1);
