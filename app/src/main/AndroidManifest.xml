@@ -9,6 +9,7 @@
 
 
     <application
+        android:name=".GlobalVariable"
         android:screenOrientation="portrait"
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:allowBackup="true"

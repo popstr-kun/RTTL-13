@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -138,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
 
         internetCheck();
 
+        System.out.println("in:"+keyInput);
+        System.out.println("out:"+keyOutput);
+
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
         btnInput.setOnClickListener((View v)->{
             runVibrate(50);
@@ -145,8 +149,9 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類
+
             startActivity(intent);
-            finish();
+            //finish();
         });
         /*-----------------------------------------------------------------*/
 
@@ -157,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TranslatLanguageForm.class);
             intent.putExtra("switchKey", switchKey); //可放所有基本類別
             startActivity(intent);
-            finish();
+            //finish();
         });
         /*-----------------------------------------------------------------*/
 
@@ -182,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
             System.out.println("switchKeyintput(0為輸入，1為輸出)： " + switchKeyIntput);
             System.out.println("languageKeyintput：" + languageKeyIntput + ", 語言："+ countryName[languageKeyIntput] + ", 國家：" + countryName[languageKeyIntput]);
+            language.setOutputLanguage(languageis[keyOutput]);
+            System.out.println(language.getSpeechLanguage());
         }
         /*-----------------------------------------------------------------*/
 
@@ -202,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
         btnMsgSend.setOnClickListener(v ->  {
             runVibrate(50);
             String content = inputText.getText().toString();
-
             if(!"".equals(content)) {
                 //Text to Speech
                 setTextToSpeech(language.getSpeechLanguage());
@@ -218,16 +224,19 @@ public class MainActivity extends AppCompatActivity {
         imageSwap.setOnClickListener(v -> {
             runVibrate(50);
             language.ioLanguageSwap();
-            //Text to Speech
-            setTextToSpeech(language.getSpeechLanguage());
 
             int i;
             i=keyInput;
             keyInput = keyOutput;
             keyOutput = i;
+
+            System.out.println("in:"+keyInput);
+            System.out.println("out:"+keyOutput);
+
             btnInput.setText(countryName[keyInput]);
             btnOutput.setText(countryName[keyOutput]);
 
+            setTextToSpeech(language.getSpeechLanguage());
         });
 
         msgRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -276,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
                 setTextToSpeech(language.getSpeechLanguage());
             }
         }
+
     }
 
     private final Handler handler = new Handler(Looper.myLooper(), new Handler.Callback() {
