@@ -9,9 +9,13 @@ import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -82,10 +86,16 @@ public class MainActivity extends AppCompatActivity {
 
     //Locale[] availableLocales = Locale.getAvailableLocales();
     Languages language = new Languages(languageis[keyInput],languageis[keyOutput]);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
     TranslateOptions options = TranslateOptions.newBuilder().setApiKey("AIzaSyB1t4w5AJ3A2fOOacSWbYjj7peFyIXoYyg").build();
     com.google.cloud.translate.Translate translate = options.getService();
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
     @Override
     protected void onDestroy() {
         if(textToSpeech != null){
@@ -106,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,19 +128,22 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setTitle("即時翻譯系統");
 
+        SharedPreferences sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE);
+        int position = sharedPreferences.getInt("position", 0);
+        layoutManager.scrollToPosition(position);
+
+
         ADActivity adActivity= new ADActivity(getApplicationContext());
         AdRequest adRequest  = new AdRequest.Builder().build();
 
-        AdView adView        = findViewById(R.id.adBanner);
-        ImageView imageSpeak = findViewById(R.id.image_speak);
-        Button btnInput      = findViewById(R.id.btn_input);
-        Button btnOutput     = findViewById(R.id.btn_output);
-        ImageView imageSwap  = findViewById(R.id.image_swap);
-        msgRecyclerView      = findViewById(R.id.msg_recycler_view);
-        inputText            = findViewById(R.id.input_text);
-        Button btnMsgSend    = findViewById(R.id.send);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
+        AdView    adView      = findViewById(R.id.adBanner);
+        ImageView imageSpeak  = findViewById(R.id.image_speak);
+        Button    btnInput    = findViewById(R.id.btn_input);
+        Button    btnOutput   = findViewById(R.id.btn_output);
+        ImageView imageSwap   = findViewById(R.id.image_swap);
+        msgRecyclerView       = findViewById(R.id.msg_recycler_view);
+        inputText             = findViewById(R.id.input_text);
+        Button btnMsgSend     = findViewById(R.id.send);
 
 
         adView.loadAd(adRequest);
@@ -137,10 +153,13 @@ public class MainActivity extends AppCompatActivity {
         msgRecyclerView.setLayoutManager(layoutManager);
         msgRecyclerView.setAdapter(msgAdapter);
 
+
         internetCheck();
 
         System.out.println("in:"+keyInput);
         System.out.println("out:"+keyOutput);
+
+
 
         /*跳轉頁面(輸入按鈕)--------------------------------------------------*/
         btnInput.setOnClickListener((View v)->{
